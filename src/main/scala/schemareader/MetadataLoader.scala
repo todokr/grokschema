@@ -1,3 +1,8 @@
 package schemareader
 
-class MetadataLoader {}
+import java.sql.DriverManager
+import scala.util.Using
+
+class MetadataLoader() {
+
+}

@@ -1,0 +1,3 @@
+package schemareader
+
+class MetadataLoader {}

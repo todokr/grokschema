@@ -19,5 +19,6 @@ erDiagram
     text department_name "not null"
     integeer perent_department_id
   }
+  
   departments o| -- o{ departments : "departments_parent_department_id_fkey"
 ```

@@ -4,7 +4,6 @@ import java.sql.DriverManager
 import scala.util.Using
 import java.sql.Connection
 
-import grokschema.datastore.{References, Reference, Tables, Table}
 class MetadataLoader(conf: Config):
   import MetadataLoader._
   Class.forName(conf.driver)

@@ -4,7 +4,7 @@ services:
     image: postgres:14
     restart: always
     ports:
-      - "5555:5432"
+      - "2345:5432"
     volumes:
       - ./postgresql:/docker-entrypoint-initdb.d
     environment:

@@ -24,7 +24,6 @@ object Config:
   private val UserKey     = "db.user"
   private val PasswordKey = "db.password"
   private val SchemaKey   = "db.schema"
-  private val DefaultSchema = "public"
 
   extension (p: Properties)
     def getString(key: String): String =
@@ -33,12 +32,14 @@ object Config:
     def getStringOr(key: String, default: String): String =
       Option(p.getProperty(key)).getOrElse(default)
 
+private val DefaultSchema = "public"
+
 case class Config(
     driver: String,
     url: String,
     user: String,
     password: String,
-    schema: String
+    schema: String = DefaultSchema
 ):
   override def toString(): String =
     s"""driver=$driver

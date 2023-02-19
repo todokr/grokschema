@@ -1,4 +1,4 @@
-package schemareader
+package grokschema.core
 
 import java.nio.file.Path
 import java.nio.charset.StandardCharsets

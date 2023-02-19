@@ -1,4 +1,4 @@
-package schemareader
+package grokschema.core
 
 class References(refs: Seq[Reference]):
   def dependencies(from: String): Seq[String] =

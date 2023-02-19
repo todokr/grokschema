@@ -1,7 +1,15 @@
 val scala3Version = "3.2.2"
 
-lazy val root = project
-  .in(file("."))
+lazy val root = project.in(file("."))
+  .settings(
+    githubOwner := "todokr",
+    githubRepository := "grokschema",
+    githubTokenSource := TokenSource.GitConfig("github.token"),
+  )
+  .aggregate(core)
+
+lazy val core = project
+  .in(file("core"))
   .settings(
     organization := "io.github.todokr",
     name := "grokschema",
@@ -21,6 +29,3 @@ lazy val root = project
     )
   )
 
-githubOwner := "todokr"
-githubRepository := "grokschema"
-githubTokenSource := TokenSource.GitConfig("github.token")

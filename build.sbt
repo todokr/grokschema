@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     organization := "io.github.todokr",
-    name := "schemareader",
+    name := "grokschema",
     version := "0.1.0-SNAPSHOT",
     versionScheme := Some("early-semver"),
     scalaVersion := scala3Version,
@@ -22,5 +22,5 @@ lazy val root = project
   )
 
 githubOwner := "todokr"
-githubRepository := "schema-reader"
+githubRepository := "grokschema"
 githubTokenSource := TokenSource.GitConfig("github.token")

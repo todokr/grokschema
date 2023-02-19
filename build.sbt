@@ -3,8 +3,10 @@ val scala3Version = "3.2.2"
 lazy val root = project
   .in(file("."))
   .settings(
-    name := "Schema Reader",
+    organization := "io.github.todokr",
+    name := "schemareader",
     version := "0.1.0-SNAPSHOT",
+    versionScheme := Some("early-semver"),
     scalaVersion := scala3Version,
     scalacOptions ++= Seq(
       "-new-syntax",
@@ -21,4 +23,4 @@ lazy val root = project
 
 githubOwner := "todokr"
 githubRepository := "schema-reader"
-githubTokenSource := TokenSource.gitConfig("github.token")
+githubTokenSource := TokenSource.GitConfig("github.token")

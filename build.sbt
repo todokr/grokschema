@@ -18,3 +18,7 @@ lazy val root = project
       "org.scalameta" %% "munit" % "0.7.29" % Test
     )
   )
+
+githubOwner := "todokr"
+githubRepository := "schema-reader"
+githubTokenSource := TokenSource.gitConfig("github.token")

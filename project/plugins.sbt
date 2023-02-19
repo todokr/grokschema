@@ -1,0 +1,1 @@
+addSbtPlugin("com.codecommit" % "sbt-github-packages" % "5.2.0")

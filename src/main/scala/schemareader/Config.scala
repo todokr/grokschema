@@ -6,8 +6,8 @@ import java.nio.charset.StandardCharsets
 import scala.io.Source
 import java.util.Properties
 
-object JdbcConfig:
-  def loadFromProperties(path: Path): JdbcConfig =
+object Config:
+  def loadFromProperties(path: Path): Config =
     val prop = new Properties()
     val reader = Source.fromFile(path.toFile, StandardCharsets.UTF_8.name).bufferedReader
     prop.load(reader)
@@ -17,7 +17,7 @@ object JdbcConfig:
     val user     = prop.getString(UserKey)
     val password = prop.getString(PasswordKey)
     val schema   = prop.getStringOr(SchemaKey, DefaultSchema)
-    JdbcConfig(driver, url, user, password, schema)
+    Config(driver, url, user, password, schema)
   
   private val DriverKey   = "db.driver"
   private val UrlKey      = "db.url"
@@ -33,7 +33,7 @@ object JdbcConfig:
     def getStringOr(key: String, default: String): String =
       Option(p.getProperty(key)).getOrElse(default)
 
-case class JdbcConfig(
+case class Config(
     driver: String,
     url: String,
     user: String,

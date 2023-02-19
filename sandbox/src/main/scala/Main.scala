@@ -9,8 +9,7 @@ import grokschema.core.MetadataLoader
   )
   val loader = MetadataLoader(config)
   val refs = loader.loadReferences()
-  val deps = refs.dependencies("target_users")
-  println(deps)
+  println(refs)
   
   val tables = loader.loadTables()
   println(tables)

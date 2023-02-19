@@ -11,6 +11,13 @@ class References(refs: Seq[Reference]):
         .toSeq
     linear.head.fromTable +: linear.map(_.toTable)
 
+  override def toString(): String =
+    refs
+      .map { ref =>
+        s"${ref.fromTable}.${ref.fromColumn} --(${ref.constraintName})-> ${ref.toTable}.${ref.toColumn}"
+      }
+      .mkString("\n")
+
 case class Reference(
     tableSchema: String,
     constraintName: String,

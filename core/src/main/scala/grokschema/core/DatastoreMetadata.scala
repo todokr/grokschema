@@ -37,9 +37,7 @@ class Tables(tbls: Seq[Table]):
       .map { t =>
         val cols = t.columns
           .map { col =>
-            s"""${if col.isPk then "[PK] " else ""}${col.name} ${col.dataType} ${
-                if col.nullable then "null" else "not null"
-              }"""
+            s"${col.dataType} ${col.columnName} ${col.attributes.mkString(",")}"
           }
           .mkString("\n")
         s"""${"=" * 30}
@@ -58,8 +56,9 @@ final case class Table(
 
 object Table:
   final case class Column(
-      name: String,
+      tableName: String,
+      columnName: String,
       dataType: String,
-      isPk: Boolean,
-      nullable: Boolean
+      attributes: Seq[Attribute]
   )
+  type Attribute = "PK" | "FK" | "not null"

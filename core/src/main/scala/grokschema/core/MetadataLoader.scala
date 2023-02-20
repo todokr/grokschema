@@ -31,7 +31,7 @@ class MetadataLoader(conf: Config):
       References(refs)
     }
 
-  def loadTables(): Tables =
+  def loadTables(refs: References): Tables =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(TableStructureSql)
       val paramCount = TableStructureSql.count(_ == '?')
@@ -56,8 +56,9 @@ class MetadataLoader(conf: Config):
         records
           .groupBy { case (schema, table, _, _, _, _) => (schema, table) }
           .map { case ((schema, table), cols) =>
-            val columns = cols.map { case (_, _, name, tpe, isPk, nullable) =>
-              Table.Column(name, tpe, isPk, nullable)
+            val columns = cols.map { case (_, tName, cName, tpe, isPk, nullable) =>
+
+              Table.Column(tName, cName, tpe, isPk, nullable)
             }
             Table(schema, table, columns)
           }

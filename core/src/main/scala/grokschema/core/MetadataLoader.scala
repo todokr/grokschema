@@ -1,5 +1,8 @@
 package grokschema.core
 
+import grokschema.core.Table.Column
+import grokschema.core.Table.Column.Attribute
+
 import java.sql.DriverManager
 import scala.util.Using
 import java.sql.Connection
@@ -31,7 +34,7 @@ class MetadataLoader(conf: Config):
       References(refs)
     }
 
-  def loadTables(refs: References): Tables =
+  def loadSchema(references: References): Schema =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(TableStructureSql)
       val paramCount = TableStructureSql.count(_ == '?')
@@ -57,17 +60,20 @@ class MetadataLoader(conf: Config):
           .groupBy { case (schema, table, _, _, _, _) => (schema, table) }
           .map { case ((schema, table), cols) =>
             val columns = cols.map { case (_, tName, cName, tpe, isPk, nullable) =>
-
-              Table.Column(tName, cName, tpe, isPk, nullable)
+              import Attribute._
+              val isFk = references.refs.find(r => r.fromTable == tName && r.fromColumn == cName).nonEmpty
+              val mapping = Set(isPk -> PK, isFk -> FK, !nullable -> NotNull)
+              val attrs = mapping.collect { case (cond, attr) if cond => attr }
+              Table.Column(tName, cName, tpe, attrs)
             }
             Table(schema, table, columns)
           }
           .toSeq
-      Tables(tables)
+      Schema(tables)
     }
 
 object MetadataLoader:
-  val ReferencesSql: String =
+  private val ReferencesSql: String =
     """select
         |    tc.constraint_name,
         |    tc.table_schema,
@@ -83,7 +89,7 @@ object MetadataLoader:
         |    tc.constraint_type = 'FOREIGN KEY'
         |""".stripMargin
 
-  val TableStructureSql =
+  private val TableStructureSql =
     """select c.table_schema,
       |       c.table_name,
       |       c.column_name,

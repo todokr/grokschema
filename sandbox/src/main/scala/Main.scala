@@ -11,5 +11,5 @@ import grokschema.core.MetadataLoader
   val refs = loader.loadReferences()
   println(refs)
   
-  val tables = loader.loadTables()
+  val tables = loader.loadSchema(refs)
   println(tables)

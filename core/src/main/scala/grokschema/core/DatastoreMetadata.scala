@@ -1,6 +1,6 @@
 package grokschema.core
 
-class References(refs: Seq[Reference]):
+class References(val refs: Seq[Reference]):
   def dependencies(from: String): Seq[String] =
     val fromRef = refs.find(_.fromTable == from)
     val linear =
@@ -11,14 +11,14 @@ class References(refs: Seq[Reference]):
         .toSeq
     linear.head.fromTable +: linear.map(_.toTable)
 
-  override def toString(): String =
+  override def toString: String =
     refs
       .map { ref =>
         s"${ref.fromTable}.${ref.fromColumn} --(${ref.constraintName})-> ${ref.toTable}.${ref.toColumn}"
       }
       .mkString("\n")
 
-case class Reference(
+final case class Reference(
     tableSchema: String,
     constraintName: String,
     fromTable: String,
@@ -26,18 +26,17 @@ case class Reference(
     toTable: String,
     toColumn: String
 ):
-  override def toString(): String =
+  override def toString: String =
     s"""[$tableSchema] $toTable.$toColumn <-- $fromTable.$fromColumn ($constraintName)"""
 
-class Tables(tbls: Seq[Table]):
-  def size: Int = tbls.size
+class Schema(tbls: Seq[Table]):
 
   override def toString: String =
     tbls
       .map { t =>
         val cols = t.columns
           .map { col =>
-            s"${col.dataType} ${col.columnName} ${col.attributes.mkString(",")}"
+            s"${col.dataType} ${col.columnName} ${col.attributes.map(_.expr).mkString(",")}"
           }
           .mkString("\n")
         s"""${"=" * 30}
@@ -55,10 +54,16 @@ final case class Table(
 )
 
 object Table:
+  import Column.Attribute
   final case class Column(
       tableName: String,
       columnName: String,
       dataType: String,
-      attributes: Seq[Attribute]
+      attributes: Set[Attribute]
   )
-  type Attribute = "PK" | "FK" | "not null"
+
+  object Column:
+    enum Attribute(val expr: String):
+      case PK extends Attribute("PK")
+      case FK extends Attribute("FK")
+      case NotNull extends Attribute("not null")

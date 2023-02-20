@@ -1,13 +1,16 @@
 val scala3Version = "3.2.2"
 
 lazy val root = project.in(file("."))
-  .settings()
+  .settings(
+    publishArtifact := false,
+  )
   .aggregate(core)
 
 lazy val sandbox = project
   .in(file("sandbox"))
   .settings(
     scalaVersion := scala3Version,
+    publishArtifact := false,
   )
   .dependsOn(core)
 

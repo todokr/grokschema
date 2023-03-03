@@ -11,19 +11,19 @@ object Config:
     val prop = new Properties()
     val reader = Source.fromFile(path.toFile, StandardCharsets.UTF_8.name).bufferedReader
     prop.load(reader)
-    
-    val driver   = prop.getString(DriverKey)
-    val url      = prop.getString(UrlKey)
-    val user     = prop.getString(UserKey)
+
+    val driver = prop.getString(DriverKey)
+    val url = prop.getString(UrlKey)
+    val user = prop.getString(UserKey)
     val password = prop.getString(PasswordKey)
-    val schema   = prop.getStringOr(SchemaKey, DefaultSchema)
+    val schema = prop.getStringOr(SchemaKey, DefaultSchema)
     Config(driver, url, user, password, schema)
-  
-  private val DriverKey   = "db.driver"
-  private val UrlKey      = "db.url"
-  private val UserKey     = "db.user"
+
+  private val DriverKey = "db.driver"
+  private val UrlKey = "db.url"
+  private val UserKey = "db.user"
   private val PasswordKey = "db.password"
-  private val SchemaKey   = "db.schema"
+  private val SchemaKey = "db.schema"
 
   extension (p: Properties)
     def getString(key: String): String =
@@ -48,4 +48,3 @@ case class Config(
        |password=${password.map(_ => "*").mkString}""".stripMargin
 
 class JdbcConfigException(key: String) extends Exception(s"$key is not set")
-

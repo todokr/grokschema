@@ -1,15 +1,15 @@
 import grokschema.core.Config
 import grokschema.core.MetadataLoader
-@main def main() = 
+@main def main() =
   val config = Config(
     "org.postgresql.Driver",
     "jdbc:postgresql://localhost:2345/example",
     "root",
-    "root",
+    "root"
   )
   val loader = MetadataLoader(config)
   val refs = loader.loadReferences()
   println(refs)
-  
-  val tables = loader.loadSchema(refs)
-  println(tables)
+
+  val schema = loader.loadSchema(refs)
+  println(schema)

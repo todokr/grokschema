@@ -29,10 +29,10 @@ final case class Reference(
   override def toString: String =
     s"""[$tableSchema] $toTable.$toColumn <-- $fromTable.$fromColumn ($constraintName)"""
 
-class Schema(tbls: Seq[Table]):
+class Schema(tables: Seq[Table]):
 
   override def toString: String =
-    tbls
+    tables
       .map { t =>
         val cols = t.columns
           .map { col =>

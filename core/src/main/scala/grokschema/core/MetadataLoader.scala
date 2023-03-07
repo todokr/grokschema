@@ -8,7 +8,7 @@ import scala.util.Using
 import java.sql.Connection
 
 class MetadataLoader(conf: Config):
-  import MetadataLoader._
+  import MetadataLoader.*
   Class.forName(conf.driver)
 
   def loadReferences(): References =
@@ -60,7 +60,7 @@ class MetadataLoader(conf: Config):
           .groupBy { case (schema, table, _, _, _, _) => (schema, table) }
           .map { case ((schema, table), cols) =>
             val columns = cols.map { case (_, tName, cName, tpe, isPk, nullable) =>
-              import Attribute._
+              import Attribute.*
               val isFk = references.refs.find(r => r.fromTable == tName && r.fromColumn == cName).nonEmpty
               val mapping = Set(isPk -> PK, isFk -> FK, !nullable -> NotNull)
               val attrs = mapping.collect { case (cond, attr) if cond => attr }

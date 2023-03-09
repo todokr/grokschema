@@ -1,14 +1,16 @@
 package grokschema.core
 
+import java.sql.DriverManager
+import java.sql.Connection
+
+import scala.util.Using
+
 import grokschema.core.Table.Column
 import grokschema.core.Table.Column.Attribute
 
-import java.sql.DriverManager
-import scala.util.Using
-import java.sql.Connection
-
 class MetadataLoader(conf: Config):
   import MetadataLoader.*
+
   Class.forName(conf.driver)
 
   def loadReferences(): References =
@@ -34,7 +36,7 @@ class MetadataLoader(conf: Config):
       References(refs)
     }
 
-  def loadSchema(references: References): Schema =
+  def loadTables(): Seq[Table] =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(TableStructureSql)
       val paramCount = TableStructureSql.count(_ == '?')
@@ -55,21 +57,23 @@ class MetadataLoader(conf: Config):
         }
         .toSeq
 
-      val tables =
-        records
-          .groupBy { case (schema, table, _, _, _, _) => (schema, table) }
-          .map { case ((schema, table), cols) =>
-            val columns = cols.map { case (_, tName, cName, tpe, isPk, nullable) =>
-              import Attribute.*
-              val isFk = references.refs.find(r => r.fromTable == tName && r.fromColumn == cName).nonEmpty
-              val mapping = Set(isPk -> PK, isFk -> FK, !nullable -> NotNull)
-              val attrs = mapping.collect { case (cond, attr) if cond => attr }
-              Table.Column(tName, cName, tpe, attrs)
-            }
-            Table(schema, table, columns)
+      records
+        .groupBy { case (schema, table, _, _, _, _) => (schema, table) }
+        .map { case ((schema, table), cols) =>
+          val columns = cols.map { case (_, tName, cName, tpe, isPk, nullable) =>
+            import Attribute.*
+            // val isFk = references.refs.find(r => r.fromTable == tName && r.fromColumn == cName).nonEmpty
+            val mapping = Set(
+              isPk -> PK,
+              // isFk -> FK,
+              !nullable -> NotNull
+            )
+            val attrs = mapping.collect { case (cond, attr) if cond => attr }
+            Table.Column(tName, cName, tpe, attrs)
           }
-          .toSeq
-      Schema(tables)
+          Table(schema, table, columns)
+        }
+        .toSeq
     }
 
 object MetadataLoader:

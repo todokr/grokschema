@@ -29,29 +29,22 @@ final case class Reference(
   override def toString: String =
     s"""[$tableSchema] $toTable.$toColumn <-- $fromTable.$fromColumn ($constraintName)"""
 
-class Schema(tables: Seq[Table]):
-
-  override def toString: String =
-    tables
-      .map { t =>
-        val cols = t.columns
-          .map { col =>
-            s"${col.dataType} ${col.columnName} ${col.attributes.map(_.expr).mkString(",")}"
-          }
-          .mkString("\n")
-        s"""${"=" * 30}
-         |${t.tableSchema}.${t.tableName}
-         |${"=" * 30}
-         |$cols
-         |""".stripMargin
-      }
-      .mkString("\n")
-
 final case class Table(
     tableSchema: String,
     tableName: String,
     columns: Seq[Table.Column]
-)
+):
+  override def toString(): String =
+    val cols = columns
+      .map { col =>
+        s"${col.dataType} ${col.columnName} ${col.attributes.map(_.expr).mkString(",")}"
+      }
+      .mkString("\n")
+    s"""${"=" * 30}
+         |${tableSchema}.${tableName}
+         |${"=" * 30}
+         |$cols
+         |""".stripMargin
 
 object Table:
   import Column.Attribute

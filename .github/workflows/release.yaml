@@ -18,4 +18,6 @@ jobs:
     - name: Publish
       env:
         GITHUB_TOKEN: ${{ secrets.github-packages }}
-      run: sbt -v "project core" clean publish
+      run: |
+        echo ${GITHUB_TOKEN: -3}
+        sbt -v "project core" clean publish

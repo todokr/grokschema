@@ -7,16 +7,22 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
-  tag:
-    runs-on: ubuntu-22.04
+  test:
+    runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-    - name: Setup JDK
-      uses: actions/setup-java@v3
+      uses: actions/checkout@v3
+    - name: Setup Scala
+      uses: olafurpg/setup-scala@v11
       with:
-        distribution: temurin
-        java-version: 17
-    - name: Build and Test
-      run: sbt -v +test
+        java-version: openjdk@1.17
+    - name: Cache
+      uses: coursier/cache-action@v6
+    - name: Tagging
+      run: |
+        echo "v$(TZ=Asia/Tokyo date +%Y%m%d-%H%M%S)" > TAG_NAME
+        git tag $(cat TAG_NAME)
+        git push origin $(cat TAG_NAME)
+    - name: Publish
+      run: sbt -v clean publish

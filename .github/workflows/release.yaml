@@ -1,9 +1,8 @@
 name: Release
 on:
-  pull_request:
-    branches:
-      - main
-    types: [closed]
+  push:
+    tags:
+      - '*'
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
@@ -19,10 +18,5 @@ jobs:
         java-version: openjdk@1.17
     - name: Cache
       uses: coursier/cache-action@v6
-    - name: Tagging
-      run: |
-        echo "v$(TZ=Asia/Tokyo date +%Y%m%d-%H%M%S)" > TAG_NAME
-        git tag $(cat TAG_NAME)
-        git push origin $(cat TAG_NAME)
     - name: Publish
       run: sbt -v clean publish

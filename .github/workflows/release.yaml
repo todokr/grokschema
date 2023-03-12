@@ -6,6 +6,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: Publish
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -19,5 +20,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
       run: |
-        echo ${GITHUB_TOKEN: -3}
+        echo hello: ${{ secrets.TEST_TEXT }}
         sbt -v "project core" clean publish

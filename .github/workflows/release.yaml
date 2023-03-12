@@ -17,7 +17,7 @@ jobs:
       uses: coursier/cache-action@v6
     - name: Publish
       env:
-        GITHUB_TOKEN: ${{ secrets.github-packages }}
+        GITHUB_TOKEN: ${{ secrets.github_packages }}
       run: |
         echo ${GITHUB_TOKEN: -3}
         sbt -v "project core" clean publish

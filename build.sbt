@@ -1,10 +1,18 @@
 val scala3Version = "3.2.2"
 
+val NoPublish = Seq(
+  publishArtifact := false,
+  publish := {},
+  publishLocal := {},
+  publish / skip := true,
+  crossScalaVersions := Nil,
+  Compile / doc / sources := Seq.empty,
+  Compile / packageDoc / publishArtifact := false
+)
+
 lazy val root = project
   .in(file("."))
-  .settings(
-    publishArtifact := false
-  )
+  .settings(NoPublish)
   .aggregate(core)
 
 lazy val sandbox = project
@@ -20,8 +28,7 @@ lazy val core = project
   .settings(
     organization := "io.github.todokr",
     name := "grokschema-core",
-    version := "0.1.0-SNAPSHOT",
-    versionScheme := Some("early-semver"),
+    version := "2023.3.0-SNAPSHOT",
     scalaVersion := scala3Version,
     scalacOptions ++= Seq(
       "-new-syntax",

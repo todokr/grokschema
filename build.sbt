@@ -1,3 +1,5 @@
+ThisBuild / version := "2023.3.0"
+
 val scala3Version = "3.2.2"
 
 val NoPublish = Seq(
@@ -28,11 +30,9 @@ lazy val core = project
   .settings(
     organization := "io.github.todokr",
     name := "grokschema-core",
-    version := "2023.3.0-SNAPSHOT",
+    description := "To understand DB schema thoroughly and intuitively",
     scalaVersion := scala3Version,
     scalacOptions ++= Seq(
-      "-new-syntax",
-      "-rewrite",
       "-feature",
       "-deprecation",
       "-unchecked"

@@ -18,4 +18,4 @@ jobs:
     - name: Cache
       uses: coursier/cache-action@v6
     - name: Publish
-      run: sbt -v clean publish
+      run: sbt -v "project core" clean publish

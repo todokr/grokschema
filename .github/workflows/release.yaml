@@ -3,8 +3,6 @@ on:
   push:
     tags:
       - '*'
-env:
-  GITHUB_TOKEN: ${{ secrets.TOKEN_WITH_READ_PACKAGES_SCOPE }}
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -18,4 +16,6 @@ jobs:
     - name: Cache
       uses: coursier/cache-action@v6
     - name: Publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.github-packages }}
       run: sbt -v "project core" clean publish

@@ -42,3 +42,22 @@ object Table:
       case PK extends Attribute("PK")
       case FK extends Attribute("FK")
       case NotNull extends Attribute("not null")
+
+enum ReferentTree:
+  case Leaf(table: Table) extends ReferentTree
+  case Node(table: Table, referents: Seq[Table]) extends ReferentTree
+
+object ReferentTree:
+  def apply(refs: Seq[Reference], root: Table): ReferentTree =
+    val referents = refs
+      .filter(_.fromTable == root.tableName)
+      .map { ref =>
+        val referent = refs.find(_.constraintName == ref.constraintName).get
+        Table(
+          referent.tableSchema,
+          referent.toTable,
+          Seq.empty
+        )
+      }
+    if referents.isEmpty then Leaf(root)
+    else Node(root, referents)

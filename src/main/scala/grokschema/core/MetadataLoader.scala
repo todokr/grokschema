@@ -7,12 +7,14 @@ import scala.util.Using
 
 import grokschema.core.Table.Column
 import grokschema.core.Table.Column.Attribute
+import java.time.LocalDate
 
 class MetadataLoader(conf: Config):
   import MetadataLoader.*
 
   Class.forName(conf.driver)
 
+  /** Load table references from the database */
   def loadReferences(): Seq[Reference] =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(ReferencesSql)
@@ -35,6 +37,7 @@ class MetadataLoader(conf: Config):
         .toSeq
     }
 
+  /** Load tables and columns from the database */
   def loadTables(): Seq[Table] =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(TableStructureSql)

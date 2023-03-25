@@ -4,6 +4,6 @@ To understand DB schema thoroughly and intuitively
 
 ### Release
 ```
-git tag -a v2023.3.0 -m "v2023.3.0"
-git push origin v2023.3.0
+git tag -a 0.1.0 -m "0.1.0"
+git push origin 0.1.0
 ```

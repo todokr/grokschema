@@ -13,13 +13,13 @@ class MetadataLoader(conf: Config):
 
   Class.forName(conf.driver)
 
-  def loadReferences(): References =
+  def loadReferences(): Seq[Reference] =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(ReferencesSql)
       val paramCount = ReferencesSql.count(_ == '?')
       (1 to paramCount).foreach(i => stmt.setString(i, conf.schema))
       val rs = stmt.executeQuery()
-      val refs = Iterator
+      Iterator
         .continually(rs)
         .takeWhile(_.next())
         .map { rs =>
@@ -33,7 +33,6 @@ class MetadataLoader(conf: Config):
           )
         }
         .toSeq
-      References(refs)
     }
 
   def loadTables(): Seq[Table] =

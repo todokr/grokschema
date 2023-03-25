@@ -1,42 +1,13 @@
-ThisBuild / version := "2023.3.0"
-
-ThisBuild / scalaVersion := "3.2.2"
-
-val NoPublish = Seq(
-  publishArtifact := false,
-  publish := {},
-  publishLocal := {},
-  publish / skip := true,
-  crossScalaVersions := Nil,
-  Compile / doc / sources := Seq.empty,
-  Compile / packageDoc / publishArtifact := false
-)
+val Version = "0.1.0"
 
 lazy val root = project
   .in(file("."))
-  .settings(NoPublish)
   .settings(
-    name := "root"
-  )
-  .aggregate(core)
-
-lazy val sandbox = project
-  .in(file("sandbox"))
-  .settings(
-    name := "sandbox",
-    publishArtifact := false,
-    libraryDependencies ++= Seq(
-      "org.postgresql" % "postgresql" % "42.5.1"
-    )
-  )
-  .dependsOn(core)
-
-lazy val core = project
-  .in(file("core"))
-  .settings(
-    name := "grokschema-core",
+    name := "grokschema",
     description := "To understand DB schema thoroughly and intuitively",
+    version := Version,
     organization := "io.github.todokr",
+    scalaVersion := "3.2.2",
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "0.7.29" % Test
     )
@@ -44,5 +15,5 @@ lazy val core = project
   .settings(
     githubOwner := "todokr",
     githubRepository := "grokschema",
-    githubTokenSource := TokenSource.Environment("GITHUB_TOKEN")
+    githubTokenSource := TokenSource.Or(TokenSource.Environment("GITHUB_TOKEN"), TokenSource.GitConfig("github.token"))
   )

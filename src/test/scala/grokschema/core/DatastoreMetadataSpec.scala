@@ -1,7 +1,6 @@
 package grokschema.core
 
 import munit.*
-import grokschema.core.DatastoreMetadata
 import grokschema.core.ReferentTree
 import grokschema.core.ReferentTree.*
 
@@ -27,27 +26,29 @@ class DatastoreMetadataSpec extends FunSuite {
       )
     }
 
-    val actual = ReferentTree(refs, Table("public", "A", Seq.empty))
-    val expected = Node(
-      Table("public", "A", Seq.empty),
-      Seq(
-        Node(
-          Table("public", "B", Seq.empty),
-          Seq(
-            Leaf(Table("public", "D", Seq.empty))
-          )
-        ),
-        Node(
-          Table("public", "C", Seq.empty),
-          Seq(
-            Leaf(Table("public", "D", Seq.empty)),
-            Node(
-              Table("public", "E", Seq.empty),
-              Seq(
-                Leaf(Table("public", "F", Seq.empty))
-              )
-            ),
-            Leaf(Table("public", "F", Seq.empty))
+    val actual = ReferentTree(refs, Seq("A"))
+    val expected = Seq(
+      Node(
+        "A",
+        Seq(
+          Node(
+            "B",
+            Seq(
+              Leaf("D")
+            )
+          ),
+          Node(
+            "C",
+            Seq(
+              Leaf("D"),
+              Node(
+                "E",
+                Seq(
+                  Leaf("F")
+                )
+              ),
+              Leaf("F")
+            )
           )
         )
       )

@@ -44,20 +44,12 @@ object Table:
       case NotNull extends Attribute("not null")
 
 enum ReferentTree:
-  case Leaf(table: Table) extends ReferentTree
-  case Node(table: Table, referents: Seq[Table]) extends ReferentTree
+  case Leaf(tableName: String) extends ReferentTree
+  case Node(tableName: String, referents: Seq[ReferentTree]) extends ReferentTree
 
 object ReferentTree:
-  def apply(refs: Seq[Reference], root: Table): ReferentTree =
-    val referents = refs
-      .filter(_.fromTable == root.tableName)
-      .map { ref =>
-        val referent = refs.find(_.constraintName == ref.constraintName).get
-        Table(
-          referent.tableSchema,
-          referent.toTable,
-          Seq.empty
-        )
-      }
-    if referents.isEmpty then Leaf(root)
-    else Node(root, referents)
+  def apply(refs: Seq[Reference], rootTableNames: Seq[String]): Seq[ReferentTree] =
+    def loop(from: String): ReferentTree =
+      val referents = refs.filter(_.fromTable == from).map(_.toTable)
+      if referents.isEmpty then Leaf(from) else Node(from, referents.map(loop))
+    rootTableNames.map(loop)

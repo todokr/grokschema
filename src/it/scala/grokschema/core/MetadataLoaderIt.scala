@@ -16,53 +16,53 @@ class MetadataLoaderIt extends FunSuite:
     val actual = loader.loadReferences()
     val expected = Set(
       Reference(
-        "c_id-->id",
-        TableId("public", "a"),
-        "c_id",
-        TableId("public", "c"),
-        "id"
+        constraintName = "a_c_id_fkey",
+        fromTable = TableId("public", "a"),
+        fromColumn = "c_id",
+        toTable = TableId("public", "c"),
+        toColumn = "id"
       ),
       Reference(
-        "d_id-->id",
-        TableId("public", "b"),
-        "d_id",
-        TableId("public", "d"),
-        "id"
+        constraintName = "a_y_id_fkey",
+        fromTable = TableId("public", "a"),
+        fromColumn = "y_id",
+        toTable = TableId("public", "y"),
+        toColumn = "id"
       ),
       Reference(
-        "e_id-->id",
-        TableId("public", "c"),
-        "e_id",
-        TableId("public", "e"),
-        "id"
+        constraintName = "b_d_id_fkey",
+        fromTable = TableId("public", "b"),
+        fromColumn = "d_id",
+        toTable = TableId("public", "d"),
+        toColumn = "id"
       ),
       Reference(
-        "f_id-->id",
-        TableId("public", "d"),
-        "f_id",
-        TableId("public", "f"),
-        "id"
+        constraintName = "b_x_id_fkey",
+        fromTable = TableId("public", "b"),
+        fromColumn = "x_id",
+        toTable = TableId("public", "x"),
+        toColumn = "id"
       ),
       Reference(
-        "y_id-->id",
-        TableId("public", "a"),
-        "y_id",
-        TableId("public", "y"),
-        "id"
+        constraintName = "c_e_id_fkey",
+        fromTable = TableId("public", "c"),
+        fromColumn = "e_id",
+        toTable = TableId("public", "e"),
+        toColumn = "id"
       ),
       Reference(
-        "x_id-->id",
-        TableId("public", "b"),
-        "x_id",
-        TableId("public", "x"),
-        "id"
+        constraintName = "d_f_id_fkey",
+        fromTable = TableId("public", "d"),
+        fromColumn = "f_id",
+        toTable = TableId("public", "f"),
+        toColumn = "id"
       ),
       Reference(
-        "x_id-->id",
-        TableId("public", "y"),
-        "x_id",
-        TableId("public", "x"),
-        "id"
+        constraintName = "y_x_id_fkey",
+        fromTable = TableId("public", "y"),
+        fromColumn = "x_id",
+        toTable = TableId("public", "x"),
+        toColumn = "id"
       )
     )
 

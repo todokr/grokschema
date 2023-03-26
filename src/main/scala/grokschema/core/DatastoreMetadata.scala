@@ -62,9 +62,4 @@ object ReferentTree:
       if referents.isEmpty then Leaf(from, depth) else Node(from, depth, referents.map(loop(_, depth + 1)))
     rootTables.map(loop(_, 0))
 
-opaque type TableId = (String, String)
-extension (tableId: TableId)
-  def tableSchema: String = tableId._1
-  def tableName: String = tableId._2
-object TableId:
-  def apply(tableSchema: String, tableName: String): TableId = (tableSchema, tableName)
+final case class TableId(tableSchema: String, tableName: String)

@@ -4,16 +4,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Scala
-        uses: olafurpg/setup-scala@v11
+      - uses: actions/checkout@v3
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
         with:
-          java-version: opendjdk@1.17
-      - name: Cache
-        uses: coursier/cache-action@v6
+          jvm: corretto:17.0.6.10.1
       - name: Test
-        run: sbt -v clean Test/compile Test/test
+        run: sbtn -v clean Test/compile Test/test
   integration-test:
     runs-on: ubuntu-latest
     services:
@@ -25,16 +22,13 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - name: Setup Test DB
         run: |
           psql -h 127.0.0.1 -p 5432 -f ./docker/init/testdata.sql
-      - name: Setup Scala
-        uses: olafurpg/setup-scala@v11
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
         with:
-          java-version: opendjdk@1.17
-      - name: Cache
-        uses: coursier/cache-action@v6
+          jvm: corretto:17.0.6.10.1
       - name: Integration Test
-        run: sbt -v clean IntegraiontTest/compile IntegrationTest/test
+        run: sbtn -v clean IntegraiontTest/compile IntegrationTest/test

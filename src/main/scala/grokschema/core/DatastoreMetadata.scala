@@ -1,15 +1,14 @@
 package grokschema.core
 
 final case class Reference(
-    tableSchema: String,
     constraintName: String,
-    fromTable: String,
+    fromTable: TableId,
     fromColumn: String,
-    toTable: String,
+    toTable: TableId,
     toColumn: String
 ):
   override def toString: String =
-    s"""[$tableSchema] $toTable.$toColumn <-- $fromTable.$fromColumn ($constraintName)"""
+    s"""$toTable.$toColumn <-- $fromTable.$fromColumn ($constraintName)"""
 
 final case class Table(
     tableSchema: String,
@@ -31,7 +30,6 @@ final case class Table(
 object Table:
   import Column.Attribute
   final case class Column(
-      tableName: String,
       columnName: String,
       dataType: String,
       attributes: Set[Attribute]
@@ -44,12 +42,16 @@ object Table:
       case NotNull extends Attribute("not null")
 
 enum ReferentTree:
-  case Leaf(tableName: String) extends ReferentTree
-  case Node(tableName: String, referents: Seq[ReferentTree]) extends ReferentTree
+  case Leaf(tableId: TableId) extends ReferentTree
+  case Node(tableId: TableId, referents: Seq[ReferentTree]) extends ReferentTree
 
 object ReferentTree:
-  def apply(refs: Seq[Reference], rootTableNames: Seq[String]): Seq[ReferentTree] =
-    def loop(from: String): ReferentTree =
+  def apply(refs: Seq[Reference], rootTables: Seq[TableId]): Seq[ReferentTree] =
+    def loop(from: TableId): ReferentTree =
       val referents = refs.filter(_.fromTable == from).map(_.toTable)
       if referents.isEmpty then Leaf(from) else Node(from, referents.map(loop))
-    rootTableNames.map(loop)
+    rootTables.map(loop)
+
+opaque type TableId = (String, String)
+object TableId:
+  def apply(tableSchema: String, tableName: String): TableId = (tableSchema, tableName)

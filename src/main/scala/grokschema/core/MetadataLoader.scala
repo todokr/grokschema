@@ -25,12 +25,13 @@ class MetadataLoader(conf: Config):
         .continually(rs)
         .takeWhile(_.next())
         .map { rs =>
+          val from = TableId(rs.getString("table_schema"), rs.getString("from_table"))
+          val to = TableId(rs.getString("table_schema"), rs.getString("to_table"))
           Reference(
-            rs.getString("table_schema"),
             rs.getString("constraint_name"),
-            rs.getString("from_table"),
+            from,
             rs.getString("from_column"),
-            rs.getString("to_table"),
+            to,
             rs.getString("to_column")
           )
         }
@@ -71,7 +72,7 @@ class MetadataLoader(conf: Config):
               !nullable -> NotNull
             )
             val attrs = mapping.collect { case (cond, attr) if cond => attr }
-            Table.Column(tName, cName, tpe, attrs)
+            Table.Column(cName, tpe, attrs)
           }
           Table(schema, table, columns)
         }

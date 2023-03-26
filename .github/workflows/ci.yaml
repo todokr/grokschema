@@ -7,7 +7,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Scala
-        uses: olafurpg/setup-scala
+        uses: olafurpg/setup-scala@v11
         with:
           java-version: opendjdk@1.17
       - name: Cache
@@ -31,7 +31,7 @@ jobs:
         run: |
           psql -h 127.0.0.1 -p 5432 -f ./docker/init/testdata.sql
       - name: Setup Scala
-        uses: olafurpg/setup-scala
+        uses: olafurpg/setup-scala@v11
         with:
           java-version: opendjdk@1.17
       - name: Cache

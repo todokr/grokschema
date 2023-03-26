@@ -13,8 +13,7 @@ jobs:
       - uses: coursier/setup-action@v1
         with:
           jvm: temurin:17
-      - run: sbtn -v clean
       - name: Publish
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
-        run: sbtn -v publish
+        run: sbt -v clean publish

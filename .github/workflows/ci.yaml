@@ -9,4 +9,4 @@ jobs:
       - uses: coursier/setup-action@v1
         with:
           jvm: temurin:17
-      - run: sbtn -v clean Test/compile Test/test
+      - run: sbt -v clean Test/compile Test/test

@@ -9,26 +9,29 @@ jobs:
       - uses: coursier/setup-action@v1
         with:
           jvm: temurin:17
-      - name: Test
-        run: sbtn -v clean Test/compile Test/test
+      - run: sbtn -v clean
+      - run: sbtn -v Test/compile
+      - run: sbtn -v Test/test
   integration-test:
     runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:15.2
         env:
-          POSTGRES_PASSWORD: test
           POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          PGPASSWORD: test
         ports:
           - 5432:5432
     steps:
       - uses: actions/checkout@v3
       - name: Setup Test DB
         run: |
-          psql -h 127.0.0.1 -p 5432 -f ./docker/init/testdata.sql
+          psql -h 127.0.0.1 -U test -p 5432 -d postgres -f ./docker/init/testdata.sql
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
         with:
           jvm: temurin:17
-      - name: Integration Test
-        run: sbtn -v clean IntegraiontTest/compile IntegrationTest/test
+      - run: sbtn -v clean
+      - run: sbtn -v IntegraiontTest/compile
+      - run: sbtn -v IntegrationTest/test

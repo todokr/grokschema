@@ -14,9 +14,15 @@ lazy val root = project
     ),
     Defaults.itSettings
   )
-  .settings(
-    githubOwner := "todokr",
-    githubRepository := "grokschema",
-    githubTokenSource := TokenSource.Or(TokenSource.Environment("GITHUB_TOKEN"), TokenSource.GitConfig("github.token"))
-  )
+  .settings(GithubPublishSetting)
   .configs(IntegrationTest)
+
+lazy val GithubPublishSetting = {
+  if (sys.env.contains("GITHUB_TOKEN")) {
+    Seq(
+      githubOwner := "todokr",
+      githubRepository := "grokschema",
+      githubTokenSource := TokenSource.Environment("GITHUB_TOKEN")
+    )
+  } else Seq.empty
+}

@@ -17,51 +17,51 @@ class MetadataLoaderIt extends FunSuite:
     val expected = Set(
       Reference(
         constraintName = "a_c_id_fkey",
-        fromTable = TableId("public", "a"),
+        fromTable = "a",
         fromColumn = "c_id",
-        toTable = TableId("public", "c"),
+        toTable = "c",
         toColumn = "id"
       ),
       Reference(
         constraintName = "a_y_id_fkey",
-        fromTable = TableId("public", "a"),
+        fromTable = "a",
         fromColumn = "y_id",
-        toTable = TableId("public", "y"),
+        toTable = "y",
         toColumn = "id"
       ),
       Reference(
         constraintName = "b_d_id_fkey",
-        fromTable = TableId("public", "b"),
+        fromTable = "b",
         fromColumn = "d_id",
-        toTable = TableId("public", "d"),
+        toTable = "d",
         toColumn = "id"
       ),
       Reference(
         constraintName = "b_x_id_fkey",
-        fromTable = TableId("public", "b"),
+        fromTable = "b",
         fromColumn = "x_id",
-        toTable = TableId("public", "x"),
+        toTable = "x",
         toColumn = "id"
       ),
       Reference(
         constraintName = "c_e_id_fkey",
-        fromTable = TableId("public", "c"),
+        fromTable = "c",
         fromColumn = "e_id",
-        toTable = TableId("public", "e"),
+        toTable = "e",
         toColumn = "id"
       ),
       Reference(
         constraintName = "d_f_id_fkey",
-        fromTable = TableId("public", "d"),
+        fromTable = "d",
         fromColumn = "f_id",
-        toTable = TableId("public", "f"),
+        toTable = "f",
         toColumn = "id"
       ),
       Reference(
         constraintName = "y_x_id_fkey",
-        fromTable = TableId("public", "y"),
+        fromTable = "y",
         fromColumn = "x_id",
-        toTable = TableId("public", "x"),
+        toTable = "x",
         toColumn = "id"
       )
     )

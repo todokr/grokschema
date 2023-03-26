@@ -25,13 +25,11 @@ class MetadataLoader(conf: Config):
         .continually(rs)
         .takeWhile(_.next())
         .map { rs =>
-          val from = TableId(rs.getString("table_schema"), rs.getString("from_table"))
-          val to = TableId(rs.getString("table_schema"), rs.getString("to_table"))
           Reference(
             rs.getString("constraint_name"),
-            from,
+            rs.getString("from_table"),
             rs.getString("from_column"),
-            to,
+            rs.getString("to_table"),
             rs.getString("to_column")
           )
         }
@@ -83,7 +81,6 @@ object MetadataLoader:
   private val ReferencesSql: String =
     """select
         |    tc.constraint_name,
-        |    tc.table_schema,
         |    ccu.table_name as to_table,
         |    ccu.column_name as to_column,
         |    kcu.table_name as from_table,

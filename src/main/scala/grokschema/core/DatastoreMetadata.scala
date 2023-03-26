@@ -2,13 +2,13 @@ package grokschema.core
 
 final case class Reference(
     constraintName: String,
-    fromTable: TableId,
+    fromTable: String,
     fromColumn: String,
-    toTable: TableId,
+    toTable: String,
     toColumn: String
 ):
   override def toString: String =
-    s"""${toTable.tableSchema}.${toTable.tableName}.$toColumn <-- ${fromTable.tableSchema}.${fromTable.tableName}.$fromColumn ($constraintName)"""
+    s"""$fromTable.$fromColumn --> $toTable.$toColumn ($constraintName)"""
 
 final case class Table(
     tableSchema: String,
@@ -41,23 +41,24 @@ object Table:
       case FK extends Attribute("FK")
       case NotNull extends Attribute("not null")
 
-enum ReferentTree(tableId: TableId, depth: Int):
-  case Leaf(tableId: TableId, depth: Int) extends ReferentTree(tableId, depth)
-  case Node(tableId: TableId, depth: Int, referents: Set[ReferentTree]) extends ReferentTree(tableId, depth)
+/** Represents a tree of referents */
+enum ReferentTree(tableName: String, depth: Int):
+  case Leaf(tableName: String, depth: Int) extends ReferentTree(tableName, depth)
+  case Node(tableName: String, depth: Int, referents: Set[ReferentTree]) extends ReferentTree(tableName, depth)
   override def toString(): String =
     val indentStr = "- "
     def loop(tree: ReferentTree): String =
       tree match
-        case Leaf(tableId, depth) => s"${"  " * depth + indentStr}${tableId.tableSchema}.${tableId.tableName}"
+        case Leaf(tableId, depth) => s"${"  " * depth + indentStr}$tableName"
         case Node(tableId, depth, referents) =>
           val referentsStr = referents.map(loop).mkString("\n")
-          s"""${"  " * depth + indentStr}${tableId.tableSchema}.${tableId.tableName}
+          s"""${"  " * depth + indentStr}$tableName
              |$referentsStr""".stripMargin
     loop(this)
 
 object ReferentTree:
-  def apply(refs: Set[Reference], rootTables: Seq[TableId]): Seq[ReferentTree] =
-    def loop(from: TableId, depth: Int): ReferentTree =
+  def apply(refs: Set[Reference], rootTables: Seq[String]): Seq[ReferentTree] =
+    def loop(from: String, depth: Int): ReferentTree =
       val referents = refs.filter(_.fromTable == from).map(_.toTable)
       if referents.isEmpty then Leaf(from, depth) else Node(from, depth, referents.map(loop(_, depth + 1)))
     rootTables.map(loop(_, 0))

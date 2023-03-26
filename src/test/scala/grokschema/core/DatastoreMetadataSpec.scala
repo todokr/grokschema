@@ -18,47 +18,47 @@ class DatastoreMetadataSpec extends FunSuite {
     ).map { (fromTable, fromColumn, toTable, toColumn) =>
       Reference(
         s"$fromColumn-->$toColumn",
-        TableId("public", fromTable),
+        fromTable,
         fromColumn,
-        TableId("public", toTable),
+        toTable,
         toColumn
       )
     }
 
-    val actual = ReferentTree(refs, Seq(TableId("public", "a"), TableId("public", "b")))
+    val actual = ReferentTree(refs, Seq("a", "b"))
     val expected = Seq(
       Node(
-        TableId("public", "a"),
+        "a",
         0,
         Set(
           Node(
-            TableId("public", "c"),
+            "c",
             1,
             Set(
-              Leaf(TableId("public", "e"), 2)
+              Leaf("e", 2)
             )
           ),
           Node(
-            TableId("public", "y"),
+            "y",
             1,
             Set(
-              Leaf(TableId("public", "x"), 2)
+              Leaf("x", 2)
             )
           )
         )
       ),
       Node(
-        TableId("public", "b"),
+        "b",
         0,
         Set(
           Node(
-            TableId("public", "d"),
+            "d",
             1,
             Set(
-              Leaf(TableId("public", "f"), 2)
+              Leaf("f", 2)
             )
           ),
-          Leaf(TableId("public", "x"), 1)
+          Leaf("x", 1)
         )
       )
     )

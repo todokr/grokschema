@@ -9,11 +9,14 @@ lazy val root = project
     organization := "io.github.todokr",
     scalaVersion := "3.2.2",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.29" % Test
-    )
+      "org.scalameta" %% "munit" % "0.7.29" % "it,test",
+      "org.postgresql" % "postgresql" % "42.2.23" % "it"
+    ),
+    Defaults.itSettings
   )
   .settings(
     githubOwner := "todokr",
     githubRepository := "grokschema",
     githubTokenSource := TokenSource.Or(TokenSource.Environment("GITHUB_TOKEN"), TokenSource.GitConfig("github.token"))
   )
+  .configs(IntegrationTest)

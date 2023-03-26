@@ -1,0 +1,40 @@
+name: CI
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Scala
+        uses: olafurpg/setup-scala
+        with:
+          java-version: opendjdk@1.17
+      - name: Cache
+        uses: coursier/cache-action@v6
+      - name: Test
+        run: sbt -v clean Test/compile Test/test
+  integration-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15.2
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_USER: test
+        ports:
+          - 5432:5432
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Test DB
+        run: |
+          psql -h 127.0.0.1 -p 5432 -f ./docker/init/testdata.sql
+      - name: Setup Scala
+        uses: olafurpg/setup-scala
+        with:
+          java-version: opendjdk@1.17
+      - name: Cache
+        uses: coursier/cache-action@v6
+      - name: Integration Test
+        run: sbt -v clean IntegraiontTest/compile IntegrationTest/test

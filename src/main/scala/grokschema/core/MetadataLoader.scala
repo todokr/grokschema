@@ -15,7 +15,7 @@ class MetadataLoader(conf: Config):
   Class.forName(conf.driver)
 
   /** Load table references from the database */
-  def loadReferences(): Seq[Reference] =
+  def loadReferences(): Set[Reference] =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(ReferencesSql)
       val paramCount = ReferencesSql.count(_ == '?')
@@ -35,11 +35,11 @@ class MetadataLoader(conf: Config):
             rs.getString("to_column")
           )
         }
-        .toSeq
+        .toSet
     }
 
   /** Load tables and columns from the database */
-  def loadTables(): Seq[Table] =
+  def loadTables(): Set[Table] =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(TableStructureSql)
       val paramCount = TableStructureSql.count(_ == '?')
@@ -76,7 +76,7 @@ class MetadataLoader(conf: Config):
           }
           Table(schema, table, columns)
         }
-        .toSeq
+        .toSet
     }
 
 object MetadataLoader:

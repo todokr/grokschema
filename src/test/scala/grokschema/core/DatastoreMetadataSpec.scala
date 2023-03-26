@@ -7,17 +7,17 @@ import grokschema.core.ReferentTree.*
 class DatastoreMetadataSpec extends FunSuite {
 
   test("ReferentTree#apply") {
-    val refs = Seq(
-      ("A", "a1", "B", "b1"),
-      ("A", "a2", "C", "c1"),
-      ("B", "b2", "D", "d1"),
-      ("C", "c2", "D", "d2"),
-      ("C", "c3", "E", "e1"),
-      ("C", "c4", "F", "f1"),
-      ("E", "e2", "F", "f2")
+    val refs = Set(
+      ("a", "c_id", "c", "id"),
+      ("b", "d_id", "d", "id"),
+      ("c", "e_id", "e", "id"),
+      ("d", "f_id", "f", "id"),
+      ("a", "y_id", "y", "id"),
+      ("b", "x_id", "x", "id"),
+      ("y", "x_id", "x", "id")
     ).map { (fromTable, fromColumn, toTable, toColumn) =>
       Reference(
-        s"$fromColumn->$toColumn",
+        s"$fromColumn-->$toColumn",
         TableId("public", fromTable),
         fromColumn,
         TableId("public", toTable),
@@ -25,30 +25,40 @@ class DatastoreMetadataSpec extends FunSuite {
       )
     }
 
-    val actual = ReferentTree(refs, Seq(TableId("public", "A")))
+    val actual = ReferentTree(refs, Seq(TableId("public", "a"), TableId("public", "b")))
     val expected = Seq(
       Node(
-        TableId("public", "A"),
-        Seq(
+        TableId("public", "a"),
+        0,
+        Set(
           Node(
-            TableId("public", "B"),
-            Seq(
-              Leaf(TableId("public", "D"))
+            TableId("public", "c"),
+            1,
+            Set(
+              Leaf(TableId("public", "e"), 2)
             )
           ),
           Node(
-            TableId("public", "C"),
-            Seq(
-              Leaf(TableId("public", "D")),
-              Node(
-                TableId("public", "E"),
-                Seq(
-                  Leaf(TableId("public", "F"))
-                )
-              ),
-              Leaf(TableId("public", "F"))
+            TableId("public", "y"),
+            1,
+            Set(
+              Leaf(TableId("public", "x"), 2)
             )
           )
+        )
+      ),
+      Node(
+        TableId("public", "b"),
+        0,
+        Set(
+          Node(
+            TableId("public", "d"),
+            1,
+            Set(
+              Leaf(TableId("public", "f"), 2)
+            )
+          ),
+          Leaf(TableId("public", "x"), 1)
         )
       )
     )

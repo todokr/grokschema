@@ -8,7 +8,7 @@ jobs:
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
         with:
-          jvm: corretto:17.0.6.10.1
+          jvm: temurin:17
       - name: Test
         run: sbtn -v clean Test/compile Test/test
   integration-test:
@@ -29,6 +29,6 @@ jobs:
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
         with:
-          jvm: corretto:17.0.6.10.1
+          jvm: temurin:17
       - name: Integration Test
         run: sbtn -v clean IntegraiontTest/compile IntegrationTest/test

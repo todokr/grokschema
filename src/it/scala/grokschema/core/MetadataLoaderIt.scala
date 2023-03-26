@@ -65,4 +65,6 @@ class MetadataLoaderIt extends FunSuite:
         "id"
       )
     )
+
+    assertEquals(actual, expected)
   }

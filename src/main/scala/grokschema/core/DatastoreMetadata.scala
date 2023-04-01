@@ -7,7 +7,7 @@ final case class TableId(schema: String, table: String):
 /** Represents a data structure of the table */
 final case class Table(
     tableId: TableId,
-    columns: Seq[Table.Column]
+    columns: Seq[Column]
 ):
   override def toString(): String =
     val cols = columns
@@ -21,19 +21,16 @@ final case class Table(
          |$cols
          |""".stripMargin
 
-object Table:
-  import Column.Attribute
-  final case class Column(
-      columnName: String,
-      dataType: String,
-      attributes: Set[Attribute]
-  )
+final case class Column(
+    columnName: String,
+    dataType: String,
+    attributes: Set[ColumnAttribute]
+)
 
-  object Column:
-    enum Attribute(val expr: String):
-      case PK extends Attribute("PK")
-      case FK extends Attribute("FK")
-      case NotNull extends Attribute("not null")
+enum ColumnAttribute(val expr: String):
+  case PK extends ColumnAttribute("PK")
+  case FK extends ColumnAttribute("FK")
+  case NotNull extends ColumnAttribute("not null")
 
 /** Represents a reference between tables */
 final case class Reference(

@@ -5,8 +5,8 @@ import java.sql.Connection
 
 import scala.util.Using
 
-import grokschema.core.Table.Column
-import grokschema.core.Table.Column.Attribute
+import grokschema.core.Column
+import grokschema.core.ColumnAttribute
 import java.time.LocalDate
 
 class MetadataLoader(conf: Config):
@@ -37,7 +37,7 @@ class MetadataLoader(conf: Config):
     }
 
   /** Load tables and columns from the database */
-  def loadTables(): Set[Table] =
+  def loadTables(refs: Set[Reference]): Set[Table] =
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(TableStructureSql)
       val paramCount = TableStructureSql.count(_ == '?')
@@ -48,8 +48,10 @@ class MetadataLoader(conf: Config):
         .takeWhile(_.next())
         .map { rs =>
           (
-            rs.getString("table_schema"),
-            rs.getString("table_name"),
+            TableId(
+              rs.getString("table_schema"),
+              rs.getString("table_name")
+            ),
             rs.getString("column_name"),
             rs.getString("data_type"),
             rs.getBoolean("is_primary_key"),
@@ -59,20 +61,20 @@ class MetadataLoader(conf: Config):
         .toSeq
 
       records
-        .groupBy { case (schema, table, _, _, _, _) => (schema, table) }
-        .map { case ((schema, table), cols) =>
-          val columns = cols.map { case (_, tName, cName, tpe, isPk, nullable) =>
-            import Attribute.*
-            // val isFk = references.refs.find(r => r.fromTable == tName && r.fromColumn == cName).nonEmpty
+        .groupBy { case (tableId, _, _, _, _) => tableId }
+        .map { case (tableId, cols) =>
+          val columns = cols.map { case (tId, cName, tpe, isPk, nullable) =>
+            import ColumnAttribute.*
+            val isFk = refs.find(r => r.fromTable == tId && r.fromColumn == cName).nonEmpty
             val mapping = Set(
               isPk -> PK,
-              // isFk -> FK,
+              isFk -> FK,
               !nullable -> NotNull
             )
             val attrs = mapping.collect { case (cond, attr) if cond => attr }
-            Table.Column(cName, tpe, attrs)
+            Column(cName, tpe, attrs)
           }
-          Table(TableId(schema, table), columns)
+          Table(tableId, columns)
         }
         .toSet
     }

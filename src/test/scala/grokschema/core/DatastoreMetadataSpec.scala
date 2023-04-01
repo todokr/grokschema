@@ -17,52 +17,72 @@ class DatastoreMetadataSpec extends FunSuite {
       ("y", "x_id", "x", "id")
     ).map { (fromTable, fromColumn, toTable, toColumn) =>
       Reference(
-        s"$fromColumn-->$toColumn",
-        fromTable,
-        fromColumn,
-        toTable,
-        toColumn
+        constraintName = s"$fromColumn-->$toColumn",
+        fromTable = TableId("public", fromTable),
+        fromColumn = fromColumn,
+        toTable = TableId("public", toTable),
+        toColumn = toColumn
       )
     }
 
-    val actual = ReferentTree(refs, Seq("a", "b"))
+    val targetTables = Seq(TableId("public", "a"), TableId("public", "b"))
+    val actual = ReferentTree(refs, targetTables)
     val expected = Seq(
       Node(
-        "a",
+        TableId("public", "a"),
         0,
         Set(
           Node(
-            "c",
+            TableId("public", "c"),
             1,
             Set(
-              Leaf("e", 2)
+              Leaf(TableId("public", "e"), 2)
             )
           ),
           Node(
-            "y",
+            TableId("public", "y"),
             1,
             Set(
-              Leaf("x", 2)
+              Leaf(TableId("public", "x"), 2)
             )
           )
         )
       ),
       Node(
-        "b",
+        TableId("public", "b"),
         0,
         Set(
           Node(
-            "d",
+            TableId("public", "d"),
             1,
             Set(
-              Leaf("f", 2)
+              Leaf(TableId("public", "f"), 2)
             )
           ),
-          Leaf("x", 1)
+          Leaf(TableId("public", "x"), 1)
         )
       )
     )
 
     assertEquals(actual, expected)
+  }
+
+  test("ReferentTree#toSeq") {
+    val tree = Node(
+      TableId("public", "b"),
+      0,
+      Set(
+        Node(
+          TableId("public", ""),
+          1,
+          Set(
+            Leaf(TableId("public", "f"), 2)
+          )
+        ),
+        Leaf(TableId("public", "x"), 1)
+      )
+    )
+
+    // val actual = tree.toSet
   }
 }

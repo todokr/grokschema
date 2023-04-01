@@ -33,3 +33,4 @@ metals.sbt
 
 # Other
 .envrc
+docker/data/

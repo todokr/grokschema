@@ -38,6 +38,7 @@ class MetadataLoader(conf: Config):
 
   /** Load tables and columns from the database */
   def loadTables(refs: Set[Reference]): Set[Table] =
+    import ColumnAttribute.*
     Using.resource(DriverManager.getConnection(conf.url, conf.user, conf.password)) { conn =>
       val stmt = conn.prepareStatement(TableStructureSql)
       val paramCount = TableStructureSql.count(_ == '?')
@@ -54,8 +55,8 @@ class MetadataLoader(conf: Config):
             ),
             rs.getString("column_name"),
             rs.getString("data_type"),
-            rs.getBoolean("is_primary_key"),
-            rs.getBoolean("is_nullable")
+            Option.when(rs.getBoolean("is_primary_key"))(PK),
+            Option.unless(rs.getBoolean("is_nullable"))(NotNull)
           )
         }
         .toSeq
@@ -63,18 +64,14 @@ class MetadataLoader(conf: Config):
       records
         .groupBy { case (tableId, _, _, _, _) => tableId }
         .map { case (tableId, cols) =>
-          val columns = cols.map { case (tId, cName, tpe, isPk, nullable) =>
-            import ColumnAttribute.*
-            val isFk = refs.find(r => r.fromTable == tId && r.fromColumn == cName).nonEmpty
-            val mapping = Set(
-              isPk -> PK,
-              isFk -> FK,
-              !nullable -> NotNull
-            )
-            val attrs = mapping.collect { case (cond, attr) if cond => attr }
+          val columns = cols.map { case (tId, cName, tpe, pk, notNull) =>
+            val fk = refs.collectFirst {
+              case r if r.fromTable == tId && r.fromColumn == cName => FK(r.toTable, r.toColumn)
+            }
+            val attrs = Set(pk, notNull, fk).flatten
             Column(cName, tpe, attrs)
           }
-          Table(tableId, columns)
+          Table(tableId, columns.toSet)
         }
         .toSet
     }

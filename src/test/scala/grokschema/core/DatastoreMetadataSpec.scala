@@ -69,11 +69,11 @@ class DatastoreMetadataSpec extends FunSuite {
 
   test("ReferentTree#toSeq") {
     val tree = Node(
-      TableId("public", "b"),
+      TableId("public", "a"),
       0,
       Set(
         Node(
-          TableId("public", ""),
+          TableId("public", "b"),
           1,
           Set(
             Leaf(TableId("public", "f"), 2)
@@ -83,6 +83,14 @@ class DatastoreMetadataSpec extends FunSuite {
       )
     )
 
-    // val actual = tree.toSet
+    val actual = tree.toSet
+    val expected: Set[Referent] = Set(
+      Referent(TableId("public", "a"), 0),
+      Referent(TableId("public", "b"), 1),
+      Referent(TableId("public", "f"), 2),
+      Referent(TableId("public", "x"), 1)
+    )
+
+    assertEquals(actual, expected)
   }
 }

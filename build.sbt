@@ -14,17 +14,4 @@ lazy val root = project
     ),
     Defaults.itSettings
   )
-  .configure(GithubPublishSetting)
   .configs(IntegrationTest)
-
-lazy val GithubPublishSetting = (p: Project) =>
-  if (sys.env.contains("GITHUB_TOKEN")) {
-    p.settings(
-      githubOwner := "todokr",
-      githubRepository := "grokschema",
-      githubTokenSource := TokenSource.Environment("GITHUB_TOKEN")
-    )
-  } else {
-    println("GITHUB_TOKEN is not set. Plugin for publishing is disabled.")
-    p.disablePlugins(GitHubPackagesPlugin)
-  }

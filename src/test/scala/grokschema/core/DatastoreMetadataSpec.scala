@@ -25,9 +25,9 @@ class DatastoreMetadataSpec extends FunSuite {
       )
     }
 
-    val targetTables = Seq(TableId("public", "a"), TableId("public", "b"))
-    val actual = ReferentTree(refs, targetTables)
-    val expected = Seq(
+    val targetTable = TableId("public", "a")
+    val actual = ReferentTree(refs, targetTable)
+    val expected =
       Node(
         TableId("public", "a"),
         0,
@@ -47,22 +47,7 @@ class DatastoreMetadataSpec extends FunSuite {
             )
           )
         )
-      ),
-      Node(
-        TableId("public", "b"),
-        0,
-        Set(
-          Node(
-            TableId("public", "d"),
-            1,
-            Set(
-              Leaf(TableId("public", "f"), 2)
-            )
-          ),
-          Leaf(TableId("public", "x"), 1)
-        )
       )
-    )
 
     assertEquals(actual, expected)
   }
@@ -90,6 +75,50 @@ class DatastoreMetadataSpec extends FunSuite {
       Referent(TableId("public", "f"), 2),
       Referent(TableId("public", "x"), 1)
     )
+
+    assertEquals(actual, expected)
+  }
+
+  test("ReferentTree#contains - true") {
+    val tree = Node(
+      TableId("public", "a"),
+      0,
+      Set(
+        Node(
+          TableId("public", "b"),
+          1,
+          Set(
+            Leaf(TableId("public", "f"), 2)
+          )
+        ),
+        Leaf(TableId("public", "x"), 1)
+      )
+    )
+
+    val actual = tree.contains(TableId("public", "f"))
+    val expected = true
+
+    assertEquals(actual, expected)
+  }
+
+  test("ReferentTree#contains - false") {
+    val tree = Node(
+      TableId("public", "a"),
+      0,
+      Set(
+        Node(
+          TableId("public", "b"),
+          1,
+          Set(
+            Leaf(TableId("public", "f"), 2)
+          )
+        ),
+        Leaf(TableId("public", "x"), 1)
+      )
+    )
+
+    val actual = tree.contains(TableId("public", "z"))
+    val expected = false
 
     assertEquals(actual, expected)
   }

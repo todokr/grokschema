@@ -48,6 +48,12 @@ enum ReferentTree(tableId: TableId, depth: Int):
   case Leaf(tableId: TableId, depth: Int) extends ReferentTree(tableId, depth)
   case Node(tableId: TableId, depth: Int, referents: Set[ReferentTree]) extends ReferentTree(tableId, depth)
 
+  def contains(tableId: TableId): Boolean = this match
+    case Leaf(`tableId`, _)         => true
+    case Node(`tableId`, _, _)      => true
+    case Node(_, _, referents)      => referents.exists(_.contains(tableId))
+    case Leaf(_, _) | Node(_, _, _) => false
+
   def toSet: Set[Referent] = this match
     case Leaf(tableId, depth)            => Set(Referent(tableId, depth))
     case Node(tableId, depth, referents) => referents.flatMap(_.toSet) + Referent(tableId, depth)
@@ -64,10 +70,10 @@ enum ReferentTree(tableId: TableId, depth: Int):
     loop(this)
 
 object ReferentTree:
-  def apply(refs: Set[Reference], rootTables: Seq[TableId]): Seq[ReferentTree] =
+  def apply(refs: Set[Reference], rootTable: TableId): ReferentTree =
     def loop(from: TableId, depth: Int): ReferentTree =
       val referents = refs.filter(_.fromTable == from).map(_.toTable)
       if referents.isEmpty then Leaf(from, depth) else Node(from, depth, referents.map(loop(_, depth + 1)))
-    rootTables.map(loop(_, 0))
+    loop(rootTable, 0)
 
 final case class Referent(tableId: TableId, depth: Int)

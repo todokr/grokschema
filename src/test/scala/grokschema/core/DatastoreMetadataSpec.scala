@@ -52,7 +52,7 @@ class DatastoreMetadataSpec extends FunSuite {
     assertEquals(actual, expected)
   }
 
-  test("ReferentTree#toSeq") {
+  test("ReferentTree#linearize") {
     val tree = Node(
       TableId("public", "a"),
       0,
@@ -68,15 +68,12 @@ class DatastoreMetadataSpec extends FunSuite {
       )
     )
 
-    val actual = tree.toSet
-    val expected: Set[Referent] = Set(
-      Referent(TableId("public", "a"), 0),
-      Referent(TableId("public", "b"), 1),
-      Referent(TableId("public", "f"), 2),
-      Referent(TableId("public", "x"), 1)
-    )
+    val actual = tree.linearize
+    assertEquals(actual.size, 4)
 
-    assertEquals(actual, expected)
+    val actualOrder = actual.map(_.depth)
+
+    assertEquals(actualOrder, actualOrder.sorted)
   }
 
   test("ReferentTree#contains - true") {

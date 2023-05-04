@@ -54,9 +54,11 @@ enum ReferentTree(tableId: TableId, depth: Int):
     case Node(_, _, referents)      => referents.exists(_.contains(tableId))
     case Leaf(_, _) | Node(_, _, _) => false
 
-  def toSet: Set[Referent] = this match
-    case Leaf(tableId, depth)            => Set(Referent(tableId, depth))
-    case Node(tableId, depth, referents) => referents.flatMap(_.toSet) + Referent(tableId, depth)
+  def linearize: Seq[Referent] = this match
+    case Leaf(tableId, depth) =>
+      Seq(Referent(tableId, depth))
+    case Node(tableId, depth, referents) =>
+      Referent(tableId, depth) +: referents.toSeq.flatMap(_.linearize).sortBy(_.depth)
 
   override def toString(): String =
     val indentStr = "- "

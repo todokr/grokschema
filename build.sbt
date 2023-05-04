@@ -1,4 +1,4 @@
-val Version = "0.1.2-SNAPSHOT"
+val Version = "0.1.2"
 val Scala2 = "2.13.10"
 val Scala3 = "3.2.2"
 
